@@ -1,7 +1,17 @@
+let ShoppingCart = document.getElementById('shopping-cart')
 let label = document.getElementById('label')
-let shoppingCart = document.getElementById('shopping-cart')
+
+/**
+ * ! Basket to hold all the selected items
+ * ? the getItem part is retrieving data from the local storage
+ * ? if local storage is blank, basket becomes an empty array
+ */
 
 let basket = JSON.parse(localStorage.getItem('data')) || []
+
+/**
+ * ! To calculate total amount of selected Items
+ */
 
 let calculation = () => {
   let cartIcon = document.getElementById('cartAmount')
@@ -10,49 +20,64 @@ let calculation = () => {
 
 calculation()
 
+/**
+ * ! Generates the Cart Page with product cards composed of
+ * ! images, title, price, buttons, & Total price
+ * ? When basket is blank -> show's Cart is Empty
+ */
 
 let generateCartItems = () => {
   if (basket.length !== 0) {
-    return (shoppingCart.innerHTML = basket
+    return (ShoppingCart.innerHTML = basket
       .map((x) => {
-       let {id, item} = x;
-       let search = shopItemsData.find((y) => y.id === id) || []
-       let {img, name, price} = search
+        let { id, item } = x
+        let search = shopItemsData.find((x) => x.id === id) || []
+        let { img, price, name } = search
         return `
-     <div class= "cart-item">
-     <img width= "100" src = ${img}alt="" /> 
-     <div class="details">
-     <div class="title-price-x">
-     <h4 class"title-price">
-      <p>${name}</p>
-      <p>${price}</p>
-     </h4>
-     <i onclick="removeItem(${id})" class = "bi bi-x-lg"></i>
-     </div>
+      <div class="cart-item">
+        <img width="100" src=${img} alt="" />
 
-     <div class="buttons">
-      <i onclick="decrement(${id})" class="bi bi-dash-lg"></i>
-      <div id=${id}class="quantity">${item}</div>
-      <i onclick="increment(${id})" class="bi bi-plus-lg"></i>
-     </div>
+        <div class="details">
+        
+          <div class="title-price-x">
+            <h4 class="title-price">
+              <p>${name}</p>
+              <p class="cart-item-price">$ ${price}</p>
+            </h4>
+            <i onclick="removeItem(${id})" class="bi bi-x-lg"></i>
+          </div>
 
-     <h3>$ ${item * search.price}</h3>
+          <div class="cart-buttons">
+            <div class="buttons">
+              <i onclick="decrement(${id})" class="bi bi-dash-lg"></i>
+              <div id=${id} class="quantity">${item}</div>
+              <i onclick="increment(${id})" class="bi bi-plus-lg"></i>
+            </div>
+          </div>
 
-     </div>   
-     </div>
-     `
+          <h3>$ ${item * price}</h3>
+        
+        </div>
+      </div>
+      `
       })
       .join(''))
   } else {
-    shoppingCart.innerHTML = ``
-    label.innerHTML = ` <h2>Cart is empty
-  <a href = "index.html">
-  <button class = "HomeBtn">Back to home</button> </a>
-  
-  `
+    ShoppingCart.innerHTML = ''
+    label.innerHTML = `
+    <h2>Cart is Empty</h2>
+    <a href="index.html">
+      <button class="HomeBtn">Back to Home</button>
+    </a>
+    `
   }
 }
+
 generateCartItems()
+
+/**
+ * ! used to increase the selected product item quantity by 1
+ */
 
 let increment = (id) => {
   let selectedItem = id
@@ -71,6 +96,11 @@ let increment = (id) => {
   update(selectedItem.id)
   localStorage.setItem('data', JSON.stringify(basket))
 }
+
+/**
+ * ! used to decrease the selected product item quantity by 1
+ */
+
 let decrement = (id) => {
   let selectedItem = id
   let search = basket.find((x) => x.id === selectedItem.id)
@@ -80,50 +110,71 @@ let decrement = (id) => {
   else {
     search.item -= 1
   }
+
   update(selectedItem.id)
   basket = basket.filter((x) => x.item !== 0)
-
   generateCartItems()
-
   localStorage.setItem('data', JSON.stringify(basket))
 }
 
+/**
+ * ! To update the digits of picked items on each item card
+ */
+
 let update = (id) => {
   let search = basket.find((x) => x.id === id)
-  //console.log(search.item)
   document.getElementById(id).innerHTML = search.item
   calculation()
   TotalAmount()
 }
 
+/**
+ * ! Used to remove 1 selected product card from basket
+ * ! using the X [cross] button
+ */
+
 let removeItem = (id) => {
   let selectedItem = id
-  basket = basket.filter((x) => x.id !== selectedItem.id);
+  basket = basket.filter((x) => x.id !== selectedItem.id)
+  calculation()
   generateCartItems()
   TotalAmount()
-  calculation()
   localStorage.setItem('data', JSON.stringify(basket))
 }
 
-let clearCart = () =>{
-  basket = []
-  generateCartItems();
-  calculation()
-  localStorage.setItem('data', JSON.stringify(basket))
-}
+/**
+ * ! Used to calculate total amount of the selected Products
+ * ! with specific quantity
+ * ? When basket is blank, it will show nothing
+ */
 
-let TotalAmount = ()=>{
-  if(basket.length !==0){
-    let amount = basket.map((x) => {
-      let {item, id} = x;
-       let search = shopItemsData.find((y) => y.id === id) || []
-       return item * search.price;
-    }).reduce((x, y) =>x+y,0)
-    label.innerHTML = `
-    <he> Total Bill : $ ${amount}</h2>
+let TotalAmount = () => {
+  if (basket.length !== 0) {
+    let amount = basket
+      .map((x) => {
+        let { id, item } = x
+        let filterData = shopItemsData.find((x) => x.id === id)
+        return filterData.price * item
+      })
+      .reduce((x, y) => x + y, 0)
+
+    return (label.innerHTML = `
+    <h2>Total Bill : $ ${amount}</h2>
     <button class="checkout">Checkout</button>
-    <button onclick = "clearCart()" class="removeAll">Clear Cart</button>
-    `;
+    <button onclick="clearCart()" class="removeAll">Clear Cart</button>
+    `)
   } else return
 }
-TotalAmount();
+
+TotalAmount()
+
+/**
+ * ! Used to clear cart, and remove everything from local storage
+ */
+
+let clearCart = () => {
+  basket = []
+  generateCartItems()
+  calculation()
+  localStorage.setItem('data', JSON.stringify(basket))
+}
