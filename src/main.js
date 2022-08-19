@@ -71,8 +71,9 @@ let increment = (id) => {
   } else {
     search.item += 1
   }
-  localStorage.setItem('data', JSON.stringify(basket))
+
   update(selectedItem.id)
+  localStorage.setItem('data', JSON.stringify(basket))
 }
 
 let decrement = (id) => {
@@ -84,8 +85,10 @@ let decrement = (id) => {
   else {
     search.item -= 1
   }
-  localStorage.setItem('data', JSON.stringify(basket))
-  update(selectedItem.id)
+ update(selectedItem.id)
+ basket = basket.filter((x) => x.item !== 0)
+
+ localStorage.setItem('data', JSON.stringify(basket))
 }
 
 let update = (id) => {
