@@ -91,4 +91,7 @@ let update = (id) => {
   calculation()
 }
 
-let calculation =()=>{}
+let calculation =()=>{
+  let cartIcon = document.getElementById('cartAmount')
+  cartIcon.innerHTML = 100;
+}
