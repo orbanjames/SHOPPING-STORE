@@ -80,7 +80,8 @@ let decrement = (id) => {
   else {
     search.item -= 1
   }
-  // console.log(basket)
+
+  localStorage.setItem()
   update(selectedItem.id)
 }
 
@@ -93,5 +94,5 @@ let update = (id) => {
 
 let calculation =()=>{
   let cartIcon = document.getElementById('cartAmount')
-  cartIcon.innerHTML = 100;
+  cartIcon.innerHTML = basket.map((x) => x.item).reduce((x, y) => x + y, 0);
 }
