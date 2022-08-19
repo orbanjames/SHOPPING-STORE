@@ -114,3 +114,17 @@ a{
 /**
 *! style rules for label and some buttons
 **/
+.text-center{
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.HomeBtn{
+  background-color: #212529;
+  color: white;
+  border: none;
+  padding: 6px;
+  border-radius: 3px;
+  cursor: progress;
+  margin-top: 10px;
+}
