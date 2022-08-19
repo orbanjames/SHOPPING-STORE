@@ -46,7 +46,6 @@ let increment = (id) => {
   update(selectedItem.id)
   localStorage.setItem('data', JSON.stringify(basket))
 }
-
 let decrement = (id) => {
   let selectedItem = id
   let search = basket.find((x) => x.id === selectedItem.id)
